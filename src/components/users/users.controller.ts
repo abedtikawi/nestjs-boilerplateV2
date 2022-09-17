@@ -10,14 +10,14 @@ import {
 @Controller('/users')
 @ApiTags('Users')
 export class UsersController {
-  //   constructor() {}
+  // constructor() {}
 
   @Get()
   @ApiProperty({ description: 'Users' })
   @ApiOkResponse({ description: 'The resource was returned successfully' })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @ApiNotFoundResponse({ description: 'Resource not found' })
-  getHealth(): string {
+  getUsers(): string {
     return 'hello';
   }
 }
