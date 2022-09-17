@@ -1,22 +1,27 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiNotFoundResponse,
-  ApiForbiddenResponse,
-} from '@nestjs/swagger';
 import { AppService } from './app.service';
-import { Controller, Get } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Version, VERSION_NEUTRAL } from '@nestjs/common';
 
 @ApiTags('Health')
-@Controller()
+@Controller('/health')
 export class AppController {
   constructor(private readonly appService: AppService) {}
-
+  @Version([VERSION_NEUTRAL])
   @Get()
-  @ApiOkResponse({ description: 'The resource was returned successfully' })
-  @ApiForbiddenResponse({ description: 'Unauthorized Request' })
-  @ApiNotFoundResponse({ description: 'Resource not found' })
+  @ApiOperation({ summary: 'Neutral Version' })
+  getHealthNeutralVersion(): string {
+    return 'VERSION 2,3';
+  }
+  @Get()
+  @Version(['1'])
+  @ApiOperation({ summary: 'Stable Version' })
   getHealth(): string {
-    return this.appService.getHealth();
+    return 'VERSION 1';
+  }
+
+  @Version(['2', '4'])
+  @Get()
+  gethealthMultipleVersions(): string {
+    return 'VERSION 2,4';
   }
 }
