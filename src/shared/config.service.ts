@@ -1,13 +1,14 @@
 import * as winston from 'winston';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { NODE_ENV } from 'src/common';
 
 @Injectable()
 export class AppConfigService {
   constructor(private configService: ConfigService) {}
 
-  get env(): string {
-    return this.configService.get<string>('app.env');
+  get env(): NODE_ENV {
+    return this.configService.get<NODE_ENV>('app.env');
   }
   get name(): string {
     return this.configService.get<string>('app.name');
@@ -23,6 +24,12 @@ export class AppConfigService {
   }
   get refreshToken(): string {
     return this.configService.get<string>('app.refreshToken');
+  }
+  get baseURL(): string {
+    return this.configService.get<string>('app.baseURL');
+  }
+  get versionType(): number {
+    return Number(this.configService.get<number>('app.versionType'));
   }
   get winstonConfig(): winston.LoggerOptions {
     return {
