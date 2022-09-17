@@ -7,4 +7,6 @@ export default registerAs('app', () => ({
   logLevel: process.env.LOG_LEVEL,
   appToken: process.env.APP_TOKEN,
   refreshToken: process.env.APP_REFRESH_TOKEN,
+  baseURL: process.env.BASE_URL,
+  versionType: process.env.VERSION_TYPE,
 }));
