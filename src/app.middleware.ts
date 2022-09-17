@@ -8,12 +8,12 @@ import {
 import helmet from 'helmet';
 import * as morgan from 'morgan';
 import { Reflector } from '@nestjs/core';
-import rateLimit from 'express-rate-limit';
-import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { extractor } from './extractors';
+import rateLimit from 'express-rate-limit';
 import { CUSTOM_VERSIONING_FIELD, DEV_ENV } from './common';
 import { AppConfigService } from './shared/config.service';
 import { serveSwagger } from './documentation/serve-swagger';
+import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 
 export async function middleware(
   app: INestApplication,

@@ -7,8 +7,6 @@ import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
 import { middleware } from './app.middleware';
 import { AppConfigService } from 'src/shared/config.service';
-import { serveSwagger } from './documentation/serve-swagger';
-import { DEV_ENV } from './common';
 
 async function bootstrap(): Promise<string> {
   const app = await NestFactory.create<NestExpressApplication>(
