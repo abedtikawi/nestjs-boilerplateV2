@@ -1,21 +1,24 @@
-declare const module: any;
 import {
   ClassSerializerInterceptor,
   INestApplication,
   Logger,
   ValidationPipe,
+  VersioningType,
 } from '@nestjs/common';
 import helmet from 'helmet';
 import * as morgan from 'morgan';
 import { Reflector } from '@nestjs/core';
 import rateLimit from 'express-rate-limit';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
+import { extractor } from './extractors';
+import { CUSTOM_VERSIONING_FIELD, DEV_ENV } from './common';
+import { AppConfigService } from './shared/config.service';
+import { serveSwagger } from './documentation/serve-swagger';
 
-export function middleware(app: INestApplication): INestApplication {
-  if (module.hot) {
-    module.hot.accept();
-    module.hot.dispose(() => app.close());
-  }
+export async function middleware(
+  app: INestApplication,
+  applicationConfiguration: AppConfigService,
+): Promise<INestApplication> {
   app.use(
     morgan('combined', {
       stream: {
@@ -44,6 +47,47 @@ export function middleware(app: INestApplication): INestApplication {
       },
     }),
   );
+  if (
+    [
+      VersioningType.CUSTOM,
+      VersioningType.HEADER,
+      VersioningType.MEDIA_TYPE,
+      VersioningType.URI,
+    ].includes(applicationConfiguration.versionType)
+  ) {
+    if (!CUSTOM_VERSIONING_FIELD) {
+      Logger.error(`Please enter custom versioning field in common/index.ts`);
+      await process.exit(1);
+    }
+    switch (applicationConfiguration.versionType) {
+      case VersioningType.URI:
+        app.enableVersioning({
+          type: VersioningType.URI,
+          prefix: CUSTOM_VERSIONING_FIELD,
+        });
+        break;
+      case VersioningType.CUSTOM:
+        app.enableVersioning({ type: VersioningType.CUSTOM, extractor });
+        break;
+      case VersioningType.HEADER:
+        app.enableVersioning({
+          type: VersioningType.HEADER,
+          header: CUSTOM_VERSIONING_FIELD,
+        });
+        break;
+      case VersioningType.MEDIA_TYPE:
+        app.enableVersioning({
+          type: VersioningType.MEDIA_TYPE,
+          key: CUSTOM_VERSIONING_FIELD,
+        });
+        break;
 
+      default:
+        break;
+    }
+    if (DEV_ENV.includes(applicationConfiguration.env)) {
+      await serveSwagger(app, applicationConfiguration);
+    }
+  }
   return app;
 }
