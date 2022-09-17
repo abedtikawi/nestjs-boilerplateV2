@@ -15,7 +15,6 @@ export class HttpExceptionFilter
 {
   constructor(public reflector: Reflector) {}
   catch(exception: HttpException, host: ArgumentsHost) {
-    console.log('in exception handler');
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const r = exception.getResponse() as { message: ValidationError[] };
