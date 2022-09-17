@@ -17,7 +17,7 @@ $ npm install
 ## Running the app
 
 ```bash
-# testing
+# testing mode
 $ source src/secrets/env.testing.sh && npm run start
 
 # development mode
